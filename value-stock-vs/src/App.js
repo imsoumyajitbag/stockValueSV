@@ -8,8 +8,6 @@ function App() {
   // Simulate fetching data from an API
   useEffect(() => {
     try {
-      debugger;
-      // Replace this with actual API call or data import
       fetch('http://127.0.0.1:8000/api/stockdata').then(
         (response) => response.json()
       ).then(
@@ -23,23 +21,39 @@ function App() {
 
   return (
     <div className="App">
-      <h1>User List</h1>
+      <h1>Stock Values</h1>
       <table className="centered-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-          </tr>
-        </thead>
         <tbody>
-          {data.map((user) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-            </tr>
-          ))}
+        {
+          Object.keys(data).map((key) => {
+            const netProfitData = data[key].net_profit;
+            const dates = Object.keys(netProfitData);
+
+            return (
+              <div key={key} className="mb-4">
+                <strong>{key}</strong>
+                <table className="table table-bordered">
+                  <thead className="thead-light">
+                    <tr>
+                      <th>Date</th>
+                      {dates.map((date) => (
+                        <th key={date}>{date}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Net Profit</strong></td>
+                      {dates.map((date) => (
+                        <td key={date}>{netProfitData[date]}</td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            );
+          })
+        }
         </tbody>
       </table>
     </div>

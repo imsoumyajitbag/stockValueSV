@@ -1,5 +1,9 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from prepare import stock_data_export
+
 
 app = FastAPI()
 
@@ -14,11 +18,8 @@ app.add_middleware(
 
 @app.get("/api/stockdata")
 async def read_stock_data():
-    # Replace this with your actual user data retrieval logic
-    users = [
-        {"id": 1, "name": "John Doe", "email": "john@example.com"},
-        {"id": 2, "name": "Jane Smith", "email": "jane@example.com"},
-    ]
-    print(users)
-    return users
+    for parent_dir, _, stocks in os.walk('./EPS_trail'):
+        stock_data = stock_data_export(parent_dir, stocks)
+
+    return stock_data
 
