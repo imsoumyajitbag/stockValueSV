@@ -7,7 +7,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(to bottom, #4a90e2, #0074c8);
 }
-
+canvas {
+  background-color: ivory;
+  width: 1020px;
+  height: 400px;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

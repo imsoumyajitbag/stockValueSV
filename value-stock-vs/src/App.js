@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import FinancialDataRow from './FinancialDataRow';
+import ChartComponent from './ChartComponent';
 
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
                     <FinancialDataRow title="Net Cash Flow" data={netCashFlowData} dates={dates} />
                   </tbody>
                 </table>
+                <ChartComponent dateLabels={dates} netProfitData={netProfitData} epsData={epsData} netCashFlowData={netCashFlowData}/>
               </div>
             );
           })

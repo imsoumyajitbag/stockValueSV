@@ -121,3 +121,6 @@ def stock_data_export(parent_dir, stocks):
 
     # Create a DataFrame with the cell value
     # df = pd.DataFrame({'Value': cell_values})
+
+def _format_date(date):
+    return date.strftime('%B %Y')
