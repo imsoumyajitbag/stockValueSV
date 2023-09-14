@@ -5,12 +5,13 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(to bottom, #4a90e2, #0074c8);
+  background: linear-gradient(to bottom, #a1e798, #1ca3d8);
 }
 canvas {
   background-color: ivory;
   width: 1020px;
-  height: 400px;
+  height: 500px;
+  max-height: 700px;
 }
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -28,4 +29,131 @@ table {
 td {
   border: 1px solid #ccc; /* Add a 1px solid border with a light gray color */
   padding: 8px; /* Add padding to cell content */
+}
+
+.btn-primary:hover {
+  background-color: #005ea6; /* Darker shade on hover */
+}
+
+/* CSS */
+.button-17 {
+  align-items: center;
+  appearance: none;
+  background-color: #fff;
+  border-radius: 24px;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+  box-sizing: border-box;
+  color: #3c4043;
+  cursor: pointer;
+  display: inline-flex;
+  fill: currentcolor;
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: .25px;
+  line-height: normal;
+  max-width: 100%;
+  overflow: visible;
+  padding: 2px 24px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1),opacity 15ms linear 30ms,transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+  will-change: transform,opacity;
+  z-index: 0;
+}
+
+.button-17:hover {
+  background: #F6F9FE;
+  color: #276ed1;
+}
+
+.button-17:active {
+  box-shadow: 0 4px 4px 0 rgb(60 64 67 / 30%), 0 8px 12px 6px rgb(60 64 67 / 15%);
+  outline: none;
+}
+
+.button-17:focus {
+  outline: none;
+  border: 2px solid #4285f4;
+}
+
+.button-17:not(:disabled) {
+  box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
+
+.button-17:not(:disabled):hover {
+  box-shadow: rgba(60, 64, 67, .3) 0 2px 3px 0, rgba(60, 64, 67, .15) 0 6px 10px 4px;
+}
+
+.button-17:not(:disabled):focus {
+  box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
+
+.button-17:not(:disabled):active {
+  box-shadow: rgba(60, 64, 67, .3) 0 4px 4px 0, rgba(60, 64, 67, .15) 0 8px 12px 6px;
+}
+
+.button-17:disabled {
+  box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
+
+table td,
+table th {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+thead th,
+tbody th {
+  color: #fff;
+}
+
+tbody td {
+  font-weight: 500;
+  color: rgba(255,255,255,.65);
+}
+/* CSS for the link */
+.back-link {
+  text-decoration: none;
+  color: #0074c8; /* Link color */
+  position: relative;
+  overflow: hidden; /* Hide overflow to prevent clipping during animation */
+}
+
+/* Add an arrow background image */
+.back-link::before {
+  position: absolute;
+  left: -90px; /* Initial position of the arrow */
+  bottom: 90px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #0074c8; /* Arrow color */
+  border-width: 2px 2px 0 0;
+  background: linear-gradient(135deg, transparent 50%, #0074c8 50%);
+  background-size: 5px 5px; /* Adjust the size of the stripes */
+  background-repeat: repeat; /* Repeat the stripes */
+  background-position: 0 0; /* Initial position of the background */
+  transition: transform 0.2s ease-in-out; /* Add a transition for the transform property */
+  content: url('./images-removebg-preview.png');
+  display: block;
+}
+
+/* Hover effect */
+.back-link:hover::before {
+  transform: translateX(-10px); /* Move the arrow to the right (backwards) on hover */
+}
+
+.back-link:hover {
+  background: #0074c8; /* Background color on hover */
+  color: #fff; /* Text color on hover */
+  transition: background 0.3s, color 0.3s; /* Transition for background and color */
 }

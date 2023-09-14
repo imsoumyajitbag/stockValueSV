@@ -1,9 +1,32 @@
-import React from 'react';
-import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
+import React, { useState, useEffect } from 'react';
+import { Line, Bar, Pie } from 'react-chartjs-2';
+import Chart from 'chart.js/auto';
 
 
-function ChartComponent ({ dateLabels, netProfitData, epsData, netCashFlowData }) {
+function ChartComponent({ dateLabels, netProfitData, epsData, netCashFlowData }) {
+  const [activeChart, setActiveChart] = useState('line');
+  const [chartInstance, setChartInstance] = useState(null);
+
+  useEffect(() => {
+    // Destroy the previous chart instance when the active chart changes
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+  }, [activeChart, chartInstance]);
+
+  const renderChart = () => {
+    switch (activeChart) {
+      case 'line':
+        return <Line data={chartData} options={chartOptions} />;
+      case 'bar':
+        return <Bar data={chartData} options={chartOptions} />;
+      case 'pie':
+        return <Pie data={chartData} options={chartOptions} />;
+      default:
+        return null;
+    }
+  };
+
   const chartData = {
     labels: dateLabels,
     datasets: [
@@ -32,6 +55,7 @@ function ChartComponent ({ dateLabels, netProfitData, epsData, netCashFlowData }
   };
 
   const chartOptions = {
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
@@ -45,21 +69,22 @@ function ChartComponent ({ dateLabels, netProfitData, epsData, netCashFlowData }
         beginAtZero: true,
       },
     },
-    // responsive: false,
-    maintainAspectRatio: false,
-    elements: {
-      canvas: {
-        backgroundColor: 'ivory',
-      },
-    },
   };
 
-
   return (
-    <div>
-      <Line data={chartData} options={chartOptions}/>
+    <div style={{ width: 'auto', height: 'auto' }}>
+      <div className="d-flex justify-content-center">
+        <button className="btn button-17" onClick={() => setActiveChart('line')}>Line Chart</button>
+        <button className="btn button-17" onClick={() => setActiveChart('bar')}>Bar Chart</button>
+        <button className="btn button-17" onClick={() => setActiveChart('pie')}>Pie Chart</button>
+      </div>
+      <br/>
+      <div>
+        {renderChart()}
+      </div>
+      
     </div>
   );
-};
+}
 
 export default ChartComponent;

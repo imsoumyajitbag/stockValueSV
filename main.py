@@ -76,6 +76,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get('/api/stock/{stock_id}')
+async def get_stock_details(stock_id: str):
+    stock = app.db.query(Stock).get(stock_id)
+    stock_data = {}
+    if stock:
+        stock_data[stock.name] = {
+            'net_profit': {
+                _format_date(data.date.date): data.net_profit or None
+                for data in stock.financial_data
+            },
+            'eps': {
+                _format_date(data.date.date): data.eps or None
+                for data in stock.financial_data
+            },
+            'net_cash_flow': {
+                _format_date(data.date.date): data.net_cash_flow or None
+                for data in stock.financial_data
+            },
+            'face_value': stock.face_value,
+            'id': stock.id,
+        }
+    return stock_data
+
 @app.get("/api/stockdata")
 async def read_stock_data():
     for parent_dir, _, stocks in os.walk('./EPS_trail'):
@@ -97,7 +120,8 @@ async def read_stock_data():
                     _format_date(data.date.date): data.net_cash_flow or None
                     for data in i.financial_data
                 },
-                'face_value': i.face_value
+                'face_value': i.face_value,
+                'id': i.id,
             }
             for j in i.financial_data:
                 date_iter = _format_date(j.date.date)
