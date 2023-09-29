@@ -3,7 +3,7 @@ import { Line, Bar, Pie } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
 
 
-function ChartComponent({ dateLabels, netProfitData, epsData, netCashFlowData }) {
+function ChartComponent({ dateLabels, netProfitData, epsData, netCashFlowData, bookValueData }) {
   const [activeChart, setActiveChart] = useState('line');
   const [chartInstance, setChartInstance] = useState(null);
 
@@ -49,6 +49,13 @@ function ChartComponent({ dateLabels, netProfitData, epsData, netCashFlowData })
         data: netCashFlowData,
         borderColor: 'rgba(54, 162, 235, 1)',
         backgroundColor: 'rgba(75, 192, 192, 1)',
+        fill: false,
+      },
+      {
+        label: 'BVPS',
+        data: bookValueData,
+        borderColor: 'rgba(32, 54, 54, 1)',
+        backgroundColor: 'rgba(67, 43, 121, 1)',
         fill: false,
       },
     ],

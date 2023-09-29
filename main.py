@@ -49,6 +49,9 @@ def insert_data_if_not_present(stock_name, date, financial_data):
         if stock and not stock.face_value:
             stock.face_value = financial_data.get('face_value', None)
             app.db.commit()
+        if existing_data and not existing_data.book_value_per_share:
+            existing_data.book_value_per_share = financial_data.get('book_value_per_share', None)
+            app.db.commit()
         if not existing_data:
             financial_data_record = FinancialData(
                 stock_id=stock.id,
@@ -96,8 +99,13 @@ async def get_stock_details(stock_id: str):
             },
             'face_value': stock.face_value,
             'id': stock.id,
+            'book_value_per_share': {
+                _format_date(data.date.date): round(data.book_value_per_share, 2)
+                if data.book_value_per_share else None for data in stock.financial_data
+            },
         }
     return stock_data
+
 
 @app.get("/api/stockdata")
 async def read_stock_data():
@@ -122,6 +130,10 @@ async def read_stock_data():
                 },
                 'face_value': i.face_value,
                 'id': i.id,
+                'book_value_per_share': {
+                    _format_date(data.date.date): round(data.book_value_per_share, 2)
+                    if data.book_value_per_share else None for data in i.financial_data
+                },
             }
             for j in i.financial_data:
                 date_iter = _format_date(j.date.date)
@@ -135,7 +147,6 @@ async def read_stock_data():
 
 def _add_excel_data_to_db(parent_dir, stocks):
     stock_data = stock_data_export(parent_dir, stocks)
-
     # Insert data for each stock
     for stock_name, stock_data in stock_data.items():
         for date, financial_data in stock_data['eps'].items():
@@ -144,7 +155,8 @@ def _add_excel_data_to_db(parent_dir, stocks):
                     'eps': financial_data,
                     'net_profit': stock_data['net_profit'].get(date, None),
                     'net_cash_flow': stock_data['net_cash_flow'].get(date, None),
-                    'face_value': stock_data['face_value']
+                    'face_value': stock_data['face_value'],
+                    'book_value_per_share': stock_data['book_value_per_share'].get(date, None),
                 })
 
 

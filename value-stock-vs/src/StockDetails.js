@@ -39,6 +39,7 @@ function StockDetails() {
             const epsData = stock[key].eps;
             const netCashFlowData = stock[key].net_cash_flow;
             const faceValue = stock[key].face_value;
+            const bookValuePerShare = stock[key].book_value_per_share;
             return (
               <div key={key} className="mb-4">
                 <strong>{key}</strong>
@@ -54,9 +55,10 @@ function StockDetails() {
                     <FinancialDataRow title="Net Profit" data={netProfitData} dates={dates} />
                     <FinancialDataRow title="EPS Data" data={epsData} dates={dates} />
                     <FinancialDataRow title="Net Cash Flow" data={netCashFlowData} dates={dates} />
+                    <FinancialDataRow title="Book Value per share" data={bookValuePerShare} dates={dates} />
                   </tbody>
                 </table>
-                <ChartComponent dateLabels={dates} netProfitData={netProfitData} epsData={epsData} netCashFlowData={netCashFlowData}/>
+                <ChartComponent dateLabels={dates} netProfitData={netProfitData} epsData={epsData} netCashFlowData={netCashFlowData} bookValueData={bookValuePerShare}/>
               </div>
             );
           })

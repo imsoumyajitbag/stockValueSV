@@ -25,6 +25,7 @@ class FinancialData(Base):
     eps = Column(Float)
     net_profit = Column(Float)
     net_cash_flow = Column(Float)
+    book_value_per_share = Column(Float)
 
     stock = relationship("Stock", back_populates="financial_data")
     date = relationship("DateTable", back_populates="financial_data")

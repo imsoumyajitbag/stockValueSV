@@ -5,6 +5,7 @@ import StockDetails from './StockDetails';
 
 function App() {
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Simulate fetching data from an API
   useEffect(() => {

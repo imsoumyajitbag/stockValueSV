@@ -25,6 +25,10 @@ def _accumulate_eps_data(workbook, sheet_name, col_range, date_row_num, adj_eq_s
         date_cell = workbook[sheet_name][(cell + str(date_row_num))]
         adj_eq_cell = workbook[sheet_name][(cell + str(adj_eq_shares_num))]
         net_profit_cell = workbook[sheet_name][(cell + str(net_profit_num))]
+        # print("")
+        # print(sheet_name)
+        # print("adj_eq_cell.value")
+        # print(adj_eq_cell.value)
         adj_eq_cell_val = adj_eq_cell.value
         if isinstance(adj_eq_cell_val, str):
             fv_val = 7
