@@ -1,6 +1,6 @@
 import pandas as pd
 from string import ascii_uppercase as char_up
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from openpyxl import load_workbook
 
 from openpyxl.utils.dataframe import dataframe_to_rows
@@ -70,6 +70,26 @@ def _accumulate_net_cash_flow_data(workbook, sheet_name, col_range, date_row_num
         net_cash_flow_data[date_cell_val] = net_cash_flow_cell.value
     return net_cash_flow_data
 
+def _accumulate_book_value_per_share_data(workbook, sheet_name, col_range, date_row_num, bv):
+    book_value_data = defaultdict()
+    for cell in col_range:
+        date_cell = workbook[sheet_name][(cell + str(date_row_num))]
+        # ['equity_shares_cell', 'reserves_cell', 'total_eq_shares_cell']
+        equity_shares_cell = workbook[sheet_name][(cell + str(bv.equity_shares_cell))]
+        reserves_cell = workbook[sheet_name][(cell + str(bv.reserves_cell))]
+        total_eq_shares_cell = workbook[sheet_name][(cell + str(bv.total_eq_shares_cell))]
+        if date_cell.value:
+            date_cell_val = date_cell.value.strftime('%B %Y')
+        else:
+            date_cell_val = None
+        if equity_shares_cell.value and reserves_cell.value and total_eq_shares_cell.value:
+            book_value_data[date_cell_val] = (equity_shares_cell.value + reserves_cell.value) / (
+                total_eq_shares_cell.value / 10000000
+            )
+        else:
+            book_value_data[date_cell_val] = None
+    return book_value_data
+
 def _data_accumulation(workbook):
     form_data = defaultdict(dict)
     cell_cols = list(char_up[1:11])
@@ -94,8 +114,20 @@ def _data_accumulation(workbook):
     date_val = 81
     net_cash_flow_val = 85
 
+    equity_share_cap_val = 57
+    reserves_val = 58
+
+    total_eq_shares_val = 70
+
+    BookValue = namedtuple('BookValue', ['equity_shares_cell', 'reserves_cell', 'total_eq_shares_cell'])
+
+    bv = BookValue(equity_share_cap_val, reserves_val, total_eq_shares_val)
+
     form_data['net_cash_flow'] = _accumulate_net_cash_flow_data(
         workbook, sheet, cell_cols, date_val, net_cash_flow_val
+    )
+    form_data['book_value_per_share'] = _accumulate_book_value_per_share_data(
+        workbook, sheet, cell_cols, date_val, bv
     )
 
     return form_data
