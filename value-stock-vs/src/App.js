@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import StockList from './StockList';
 import StockDetails from './StockDetails';
+import axios from 'axios';
 
 function App() {
   const [data, setData] = useState([]);
@@ -26,6 +27,33 @@ function App() {
       console.error('Error fetching data:', error);
     }
   }, []);
+
+  async function handleImportClick() {
+    const fileInput = document.getElementById('fileInput');
+    const selectedFile = fileInput.files[0];
+    debugger;
+    // Add your code to handle the import functionality here.
+    // This function will be called when the "Import" button is clicked.
+    debugger;
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+  
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/api/import', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        // Handle the response from the backend here, such as displaying a success message.
+      } catch (error) {
+        // Handle errors, such as displaying an error message to the user.
+      }
+    } else {
+      // Handle error: No file selected
+    }
+  }
 
   function handleSearch(e) {
     const searchTerm = e.target.value;
@@ -64,6 +92,10 @@ function App() {
           value={searchTerm}
           onChange={handleSearch}
         />
+        <input type="file" id="fileInput" />
+        <button className="btn btn-primary" onClick={handleImportClick}>
+          Import
+        </button>
         {Object.keys(filteredData).length > 0 ? (
         <div>
           {

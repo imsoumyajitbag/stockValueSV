@@ -1,10 +1,13 @@
 import os
+import openpyxl
 import pandas as pd
 
-from fastapi import FastAPI
+from io import BytesIO
+from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from prepare import stock_data_export, _format_date
+from prepare import stock_data_export, _format_date, _load_data_from_workbook
 from dateutil.parser import parse
+from pathlib import Path
 
 
 from sqlalchemy import create_engine
@@ -106,6 +109,18 @@ async def get_stock_details(stock_id: str):
         }
     return stock_data
 
+@app.post('/api/import')
+async def upload_file(file: UploadFile):
+    file_data = await file.read()
+    xlsx_file = BytesIO(file_data)
+
+    workbook = openpyxl.load_workbook(xlsx_file)
+    data = _load_data_from_workbook(file.filename, workbook)
+    stock_name = workbook['Data Sheet']['B1'].value
+    if not stock_name:
+        stock_name = file.filename.replace('.xlsx', '')
+    _insert_stock_data_to_db(stock_name, data)
+    return {"message": "File uploaded and processed successfully"}
 
 @app.get("/api/stockdata")
 async def read_stock_data():
@@ -147,17 +162,21 @@ async def read_stock_data():
 
 def _add_excel_data_to_db(parent_dir, stocks):
     stock_data = stock_data_export(parent_dir, stocks)
-    # Insert data for each stock
-    for stock_name, stock_data in stock_data.items():
-        for date, financial_data in stock_data['eps'].items():
-            if date:
-                insert_data_if_not_present(stock_name, parse(date), {
-                    'eps': financial_data,
-                    'net_profit': stock_data['net_profit'].get(date, None),
-                    'net_cash_flow': stock_data['net_cash_flow'].get(date, None),
-                    'face_value': stock_data['face_value'],
-                    'book_value_per_share': stock_data['book_value_per_share'].get(date, None),
-                })
+
+    for stock_name, data in stock_data.items():
+        _insert_stock_data_to_db(stock_name, data)
+
+def _insert_stock_data_to_db(stock_name, data):
+    breakpoint()
+    for date, financial_data in data['eps'].items():
+        if date:
+            insert_data_if_not_present(stock_name, parse(date), {
+                'eps': financial_data,
+                'net_profit': data['net_profit'].get(date, None),
+                'net_cash_flow': data['net_cash_flow'].get(date, None),
+                'face_value': data['face_value'],
+                'book_value_per_share': data['book_value_per_share'].get(date, None),
+            })
 
 
 # Initialize the database on application startup

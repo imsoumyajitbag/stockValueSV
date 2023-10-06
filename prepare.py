@@ -25,10 +25,6 @@ def _accumulate_eps_data(workbook, sheet_name, col_range, date_row_num, adj_eq_s
         date_cell = workbook[sheet_name][(cell + str(date_row_num))]
         adj_eq_cell = workbook[sheet_name][(cell + str(adj_eq_shares_num))]
         net_profit_cell = workbook[sheet_name][(cell + str(net_profit_num))]
-        # print("")
-        # print(sheet_name)
-        # print("adj_eq_cell.value")
-        # print(adj_eq_cell.value)
         adj_eq_cell_val = adj_eq_cell.value
         if isinstance(adj_eq_cell_val, str):
             fv_val = 7
@@ -149,14 +145,17 @@ def stock_data_export(parent_dir, stocks):
         if stock.endswith('.xlsx'):
             workbook = load_workbook(parent_dir + '/' + stock, read_only=False, data_only=False)
             parsing_stock = workbook['Data Sheet']['B1'].value
-            if not parsing_stock:
-                parsing_stock = stock.split('/')[-1].replace('.xlsx', '')
-            data[parsing_stock] = _data_accumulation(workbook)
-
+            data[parsing_stock] = _load_data_from_workbook(stock, workbook)
     return data
 
     # Create a DataFrame with the cell value
     # df = pd.DataFrame({'Value': cell_values})
+
+def _load_data_from_workbook(stock, workbook):
+    parsing_stock = workbook['Data Sheet']['B1'].value
+    if not parsing_stock:
+        parsing_stock = stock.split('/')[-1].replace('.xlsx', '')
+    return _data_accumulation(workbook)
 
 def _format_date(date):
     return date.strftime('%B %Y')
