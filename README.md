@@ -2,6 +2,9 @@
 
 #### `uvicorn main:app --reload`
 
+
+# You can import the xlsx file downloading from screener app for any stock and then check out the features of the product
+
 # Go to folder value-stock-vs to start the react server
 
 # Getting Started with Create React App
