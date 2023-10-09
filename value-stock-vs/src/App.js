@@ -31,10 +31,9 @@ function App() {
   async function handleImportClick() {
     const fileInput = document.getElementById('fileInput');
     const selectedFile = fileInput.files[0];
-    debugger;
+
     // Add your code to handle the import functionality here.
     // This function will be called when the "Import" button is clicked.
-    debugger;
     if (selectedFile) {
       const formData = new FormData();
       formData.append('file', selectedFile);
@@ -45,6 +44,13 @@ function App() {
             'Content-Type': 'multipart/form-data',
           },
         });
+        if (response.data.code == 201) {
+          alert(response.data.message);
+          window.location.reload();
+        }
+        else if (response.data.code == 409){
+          alert(response.data.message);
+        }
   
         // Handle the response from the backend here, such as displaying a success message.
       } catch (error) {

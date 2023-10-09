@@ -29,13 +29,15 @@ app = FastAPI()
 
 def insert_data_if_not_present(stock_name, date, financial_data):
     stock = app.db.query(Stock).filter_by(name=stock_name).first()
+    insertion_flag = False
     # Check if the stock already exists in the database
     try:
         if not stock:
             stock = Stock(name=stock_name)
             app.db.add(stock)
             app.db.commit()
-        
+            insertion_flag = True
+
         # Check if the date already exists in the database
         date_record = app.db.query(DateTable).filter_by(date=date.date())
         if not date_record.count():
@@ -61,7 +63,8 @@ def insert_data_if_not_present(stock_name, date, financial_data):
                 date_id=date_record.id,
                 eps=financial_data.get('eps', None),
                 net_profit=financial_data.get('net_profit', None),
-                net_cash_flow=financial_data.get('net_cash_flow', None)
+                net_cash_flow=financial_data.get('net_cash_flow', None),
+                book_value_per_share=financial_data.get('book_value_per_share', None),
             )
             app.db.add(financial_data_record)
             app.db.commit()
@@ -70,6 +73,7 @@ def insert_data_if_not_present(stock_name, date, financial_data):
         print(stock_name)
 
     app.db.close()
+    return insertion_flag
 
 
 
@@ -119,8 +123,18 @@ async def upload_file(file: UploadFile):
     stock_name = workbook['Data Sheet']['B1'].value
     if not stock_name:
         stock_name = file.filename.replace('.xlsx', '')
-    _insert_stock_data_to_db(stock_name, data)
-    return {"message": "File uploaded and processed successfully"}
+    insertion_check = _insert_stock_data_to_db(stock_name, data)
+    if insertion_check:
+        return {
+            "message": "File uploaded and processed successfully",
+            "code": 201,
+        }
+    else:
+        return {
+            "message": "Stock already exists",
+            "code": 409,
+        }
+
 
 @app.get("/api/stockdata")
 async def read_stock_data():
@@ -161,22 +175,28 @@ async def read_stock_data():
     return stock_data
 
 def _add_excel_data_to_db(parent_dir, stocks):
-    stock_data = stock_data_export(parent_dir, stocks)
-
+    stock_data = stock_data_export(parent_dir, stocks) 
+    stock_insertions = {}
+    
     for stock_name, data in stock_data.items():
-        _insert_stock_data_to_db(stock_name, data)
+        insertion_check = _insert_stock_data_to_db(stock_name, data)
+        stock_insertions[stock_name] = insertion_check
+    return stock_insertions
 
 def _insert_stock_data_to_db(stock_name, data):
-    breakpoint()
+    newly_added_stock_flag = False
     for date, financial_data in data['eps'].items():
         if date:
-            insert_data_if_not_present(stock_name, parse(date), {
+            insertion_check = insert_data_if_not_present(stock_name, parse(date), {
                 'eps': financial_data,
                 'net_profit': data['net_profit'].get(date, None),
                 'net_cash_flow': data['net_cash_flow'].get(date, None),
                 'face_value': data['face_value'],
                 'book_value_per_share': data['book_value_per_share'].get(date, None),
             })
+            if insertion_check:
+                newly_added_stock_flag = True
+    return newly_added_stock_flag
 
 
 # Initialize the database on application startup
